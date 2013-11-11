@@ -7,15 +7,12 @@
 		Visualization Laboratory
 		Texas A&M University
 
-	Copyright (C) - Donald H. House. 2005
-
 *********************************************************************/
 
 #ifndef _H_Vector
 #define _H_Vector
 
 #include "Utility.h"
-using namespace std;
 
 /* Vector Descriptions and Operations */
 
@@ -56,10 +53,10 @@ public:
   friend Vector2d operator*(double s, const Vector2d& v);
   friend double   operator*(const Vector2d& v1, const Vector2d& v2); // dot
   friend Vector2d operator^(const Vector2d& v1, const Vector2d& v2); //compt *
-  friend Vector3d operator%(const Vector2d& v1, const Vector2d& v2); // cross
+  friend double operator%(const Vector2d& v1, const Vector2d& v2); // cross
+  friend Vector2d operator~(const Vector2d& v1); // unary perpendicualar to vector
   friend Vector2d operator/(const Vector2d& v, double s); // division by scalar
   friend short    operator==(const Vector2d& one, const Vector2d& two); // eq
-  friend ostream& operator<< (ostream& os, const Vector2d& v);
 };
 
 class Vector3d {
@@ -96,7 +93,6 @@ public:
   friend Vector3d operator%(const Vector3d& v1, const Vector3d& v2); // cross
   friend Vector3d operator/(const Vector3d& v, double s); // division by scalar
   friend short    operator==(const Vector3d& one, const Vector3d& two); // equ
-  friend ostream& operator<< (ostream& os, const Vector3d& v);
 };
 
 class Vector4d {
@@ -133,7 +129,6 @@ public:
   friend Vector4d operator%(const Vector4d& v1, const Vector4d& v2); // cross
   friend Vector4d operator/(const Vector4d& v, double s); // divide by scalar
   friend short    operator==(const Vector4d& one, const Vector4d& two); // equ
-  friend ostream& operator<< (ostream& os, const Vector4d& v);
 };
 
 class Vector {
@@ -186,7 +181,6 @@ public:
   friend Vector operator%(const Vector& v1, const Vector& v2); // cross product
   friend Vector operator/(const Vector& v, double s);	  // division by scalar
   friend short  operator==(const Vector& one, const Vector& two); // equality
-  friend ostream& operator<< (ostream& os, const Vector& v);
 };
 
 #endif

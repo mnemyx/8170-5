@@ -1,13 +1,11 @@
 /********************************************************************
 
-	Matrix.h	Header File
+	Matrix.H	Header File
 
 	Matrix Algebra Objects, Methods, and Procedures
 		Donald H. House  April 17, 1997
 		Visualization Laboratory
 		Texas A&M University
-
-	Copyright (C) - Donald H. House. 2005
 
 *********************************************************************/
 
@@ -57,8 +55,6 @@ public:
   friend Matrix2x2 operator*(const Matrix2x2& m1, const Matrix2x2& m2);
   friend Matrix2x2 operator*(double a, const Matrix2x2& m);
   Matrix2x2 operator*(double a) const;
-  friend ostream& operator<< (ostream& os, const Matrix2x2& m);
-
   // mat times vector
   friend Vector2d operator*(const Matrix2x2& m, const Vector2d& v);
   // vector times mat
@@ -101,8 +97,6 @@ public:
   friend Matrix3x3 operator*(const Matrix3x3& m1, const Matrix3x3& m2);
   friend Matrix3x3 operator*(double a, const Matrix3x3& m);
   Matrix3x3 operator*(double a) const;
-  friend ostream& operator<< (ostream& os, const Matrix3x3& m);
-
   // mat times vector
   friend Vector3d operator*(const Matrix3x3& m, const Vector3d& v);
   // vector times mat
@@ -148,8 +142,6 @@ public:
   friend Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
   friend Matrix4x4 operator*(double a, const Matrix4x4& m);
   Matrix4x4 operator*(double a) const;
-  friend ostream& operator<< (ostream& os, const Matrix4x4& m);
-
   friend Matrix4x4 LU_Decompose(const Matrix4x4& M, int *indx);
   friend void LU_back_substitution(const Matrix4x4& M, int *indx, double col[]);
   // mat times vector
@@ -208,15 +200,15 @@ public:
   Matrix transpose() const;
   Matrix inv() const;
   void svd(Matrix &U, Vector &W, Matrix &V) const;
- 
+
+  friend Matrix diag(const Vector &V);
+
   const Matrix& operator=(const Matrix& m2);
   friend Matrix operator+(const Matrix& m1, const Matrix& m2);
   friend Matrix operator-(const Matrix& m1, const Matrix& m2);
   friend Matrix operator*(const Matrix& m1, const Matrix& m2);
   friend Matrix operator*(double a, const Matrix& m);
   Matrix operator*(double a) const;
-  friend ostream& operator<< (ostream& os, const Matrix& m);
-
   friend Matrix LU_Decompose(const Matrix& M, int *indx);
   friend void LU_back_substitution(const Matrix& M, int *indx, double col[]);
   // mat times vector
@@ -226,7 +218,5 @@ public:
   // outer product
   friend Matrix operator&(const Vector& v1, const Vector& v2);
 };
-
-Matrix diag(const Vector &V);
 
 #endif

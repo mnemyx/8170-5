@@ -5,7 +5,6 @@
 //  Programmer: Donald House
 //  Date: March 8, 1999
 //
-//  Copyright (C) - Donald H. House. 2005
 //
 
 using namespace std;

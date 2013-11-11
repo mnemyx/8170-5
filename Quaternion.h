@@ -7,7 +7,7 @@
 		Visualization Laboratory
 		Texas A&M University
 
-	Q to M and M to Q code from Baraff & Witkin 
+	Q to M and M to Q code from Baraff & Witkin
         SIGGRAPH 97 Course Notes, Course 19, Physically Based Modeling
 
 *********************************************************************/
@@ -16,6 +16,8 @@
 #define _QUATERNION_H_
 
 #include "Matrix.h"
+
+using namespace std;
 
 struct Quaternion{
 public:

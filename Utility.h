@@ -5,7 +5,6 @@
 //  Programmer: Donald House
 //  Date: March 8, 1999
 //
-//  Copyright (C) - Donald H. House. 2005
 //
 
 #ifndef _H_UTILITY
@@ -18,7 +17,7 @@
 #include <cstdlib>
 
 /* range of real numbers */
-#define SMALLNUMBER	1.0e-5
+#define SMALLNUMBER	1.0e-10
 #define HUGENUMBER	1.0e10
 
 /* Miscellaneous Scalar Math */
@@ -46,7 +45,7 @@
 /*
   Boolean type
 */
-enum boolean{FALSE, TRUE};
+//enum boolean{FALSE, TRUE};
 
 /*
   computes sqrt(a^2 + b^2) without destructive underflow or overflow

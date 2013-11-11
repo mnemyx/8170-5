@@ -1,13 +1,11 @@
 /********************************************************************
 
-	Vector.cpp	Source File
+	Vector.C	Source File
 
 	Vector Algebra Objects, Methods, and Procedures
 		Donald H. House  April 17, 1997
 		Visualization Laboratory
 		Texas A&M University
-
-	Copyright (C) - Donald H. House. 2005
 
 *********************************************************************/
 
@@ -578,23 +576,23 @@ double Vector::normsqr() const
 // Unary negation of a vector
 Vector2d operator-(const Vector2d& v1){
   Vector2d r(-v1.x, -v1.y);
-  return r;
+  return(r);
 }
 Vector3d operator-(const Vector3d& v1){
   Vector3d r(-v1.x, -v1.y, -v1.z);
-  return r;
+  return(r);
 }
 Vector4d operator-(const Vector4d& v1){
   Vector4d r(-v1.x, -v1.y, -v1.z, -v1.w);
-  return r;
+  return(r);
 }
 Vector operator-(const Vector& v1){
   Vector r(v1.N);
   int i;
-  
+
   for(i = 0; i < v1.N; i++)
-    r[i] = -v1.v[i];
-  return r;
+    r[i] = v1.v[i];
+  return(r);
 }
 
 //  Addition of 2 Vectors.
@@ -825,13 +823,9 @@ Vector operator^(const Vector& v1, const Vector& v2)
 }
 
 // Cross product of two Vectors
-Vector3d operator%(const Vector2d& v1, const Vector2d& v2)
+double operator%(const Vector2d& v1, const Vector2d& v2)
 {
-  Vector3d cp;
-  cp.x = 0;
-  cp.y = 0;
-  cp.z = v1.x * v2.y - v1.y * v2.x;
-  return (cp);
+  return v1.x * v2.y - v1.y * v2.x;
 }
 Vector3d operator%(const Vector3d& v1, const Vector3d& v2)
 {
@@ -861,6 +855,15 @@ Vector operator%(const Vector& v1, const Vector& v2)
   cerr << "sorry, (Vector % Vector) not implemented yet" << endl;
   exit(1);
   return v1;
+}
+
+// Unary perpendicular to a vector.
+Vector2d operator~(const Vector2d& v1)
+{
+  Vector2d p;
+  p.x = -v1.y;
+  p.y = v1.x;
+  return(p);
 }
 
 // Divide a vector by a scalar.
@@ -953,32 +956,3 @@ const Vector& Vector::operator=(const Vector& v2){
 
   return *this;
 }
-
-ostream& operator<< (ostream& os, const Vector2d& v){
-  os << "[" << v.x << " " << v.y << "]";
-  return os;
-}
-
-ostream& operator<< (ostream& os, const Vector3d& v){
-  os << "[" << v.x << " " << v.y << " " << v.z << "]";
-  return os;
-}
-
-ostream& operator<< (ostream& os, const Vector4d& v){
-  os << "[" << v.x << " " << v.y << " " << v.z << " " << v.w << "]";
-  return os;
-}
-
-ostream& operator<< (ostream& os, const Vector& v){
-  if(v.N == 0)
-    os << "[]";
-  else{
-    int i;
-    os << "[" << v[0];
-    for(i = 1; i < v.N; i++)
-      os << " " << v[i];
-    os << "]";
-  }
-  return os;
-}
-

@@ -1,97 +1,71 @@
-#----------------------------------------------
-#  Makefile for CpSc8170 - Proj5: Ridig Body Simulation
-#----------------------------------------------
-#
-#  Gina Guerrero
-#
-
 CC      = g++
 C	= cpp
 H	= h
-CFLAGS		= -g `Magick++-config --cppflags`
-LFLAGS		= -g `Magick++-config --ldflags`
+
+CFLAGS = -g
 
 ifeq ("$(shell uname)", "Darwin")
-  LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lMagick++ -lm
+  LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lm
 else
   ifeq ("$(shell uname)", "Linux")
-    LDFLAGS     = -lglut -lGL -lMagick++ -lm -L/usr/local/lib -lGLU
+    LDFLAGS     = -lglut -lGL -lm -L/usr/local/lib -lGLU
   endif
 endif
 
-HFILES 	= File.${H} OBJFile.${H} MTLFile.${H} ImageFile.${H} PolySurf.${H} Face.${H} Line.${H} Group.${H} Material.${H} Color.${H} Pixmap.${H} MakeSpace.${H} Quaternion.${H} Matrix.${H} Vector.${H} Utility.${H} gauss.${H} Strut.${H} Hinge.${H} State.${H}
-OFILES 	= File.o OBJFile.o MTLFile.o ImageFile.o PolySurf.o Face.o Line.o Group.o Material.o Pixmap.o Color.o Quaternion.o Matrix.o Vector.o Utility.o gauss.o Strut.o Hinge.o State.o
-PROJECT = rb
+HFILES = Quaternion.${H} RBSystem.${H} StateVector.${H} RigidBody.${H} Geometry.${H} EntryTable.${H} OverlapList.${H} ExtentList.${H} ContactList.${H} Plane.${H} Witness.${H} Matrix.${H} Vector.${H} Utility.${H}
+OFILES = Quaternion.o RBSystem.o StateVector.o RigidBody.o Geometry.o EntryTable.o OverlapList.o ExtentList.o ContactList.o Plane.o Witness.o Matrix.o Vector.o Utility.o
+PROJECT = rbody
 
-${PROJECT}:	${PROJECT}.o $(OFILES)
-	${CC} $(LFLAGS) -o ${PROJECT} ${PROJECT}.o $(OFILES) $(LDFLAGS)
+${PROJECT}:	${PROJECT}.o ${OFILES}
+	${CC} ${CFLAGS} -o ${PROJECT} ${PROJECT}.o ${OFILES} ${LDFLAGS}
 
-${PROJECT}.o: ${PROJECT}.${C} $(HFILES)
-	${CC} $(CFLAGS) -c ${PROJECT}.${C}
+${PROJECT}.o: ${PROJECT}.${C} ${HFILES}
+	${CC} ${CFLAGS} -c ${PROJECT}.${C}
 
-State.o: State.${C} State.${H}
-	${CC} ${CFLAGS} -c ${INCFLAGS} State.${C}
+RBSystem.o: RBSystem.${C} ${HFILES} 
+	${CC} ${CFLAGS} -c RBSystem.${C}
 
-Hinge.o: Hinge.${C} Hinge.${H}
-	${CC} ${CFLAGS} -c ${INCFLAGS} Hinge.${C}
+StateVector.o: StateVector.${C} StateVector.${H} Vector.${H} Utility.${H}
+	${CC} ${CFLAGS} -c StateVector.${C}
 
-Strut.o: Strut.${C} Strut.${H}
-	${CC} ${CFLAGS} -c ${INCFLAGS} Strut.${C}
+RigidBody.o: RigidBody.${C} RigidBody.${H} Geometry.${H} Plane.${H} Witness.${H} Matrix.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c RigidBody.${C}
 
-gauss.o: gauss.${C} gauss.${H}
-	${CC} ${CFLAGS} -c ${INCFLAGS} gauss.${C}
+Geometry.o: Geometry.${C} Geometry.${H} Plane.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c Geometry.${C}
+	
+EntryTable.o: EntryTable.${C} EntryTable.${H} 
+	${CC} ${CFLAGS} -c EntryTable.${C}
 
-File.o:  File.${C} File.${H}
-	${CC} ${CFLAGS} -c File.${C}
+OverlapList.o: OverlapList.${C} OverlapList.${H} EntryTable.${H} RigidBody.${H} Geometry.${H} Plane.${H} Witness.${H} Matrix.${H} Vector.${H} Utility.${H}
+	${CC} ${CFLAGS} -c OverlapList.${C}
 
-OBJFile.o:  OBJFile.${C} File.${H} OBJFile.${H} MTLFile.${H} Vector.${H} Utility.${H}
-	${CC} ${CFLAGS} -c OBJFile.${C}
+ExtentList.o: ExtentList.${C} ExtentList.${H} OverlapList.${H} EntryTable.${H} RigidBody.${H} Geometry.${H} Plane.${H} Witness.${H} Matrix.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c ExtentList.${C}
 
-MTLFile.o:  MTLFile.${C} File.${H} MTLFile.${H} ImageFile.${H} Color.${H} PolySurf.${H} Pixmap.${H}
-	${CC} ${CFLAGS} -c MTLFile.${C}
+ContactList.o: ContactList.${C} ContactList.${H} OverlapList.${H} EntryTable.${H} RigidBody.${H} Geometry.${H} Plane.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c ContactList.${C}
 
-ImageFile.o:  ImageFile.${C} File.${H} ImageFile.${H} Pixmap.${H}
-	${CC} ${CFLAGS} -c ImageFile.${C}
+Plane.o: Plane.${C} Plane.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c Plane.${C}
 
-PolySurf.o:  PolySurf.${C} PolySurf.${H} Pixmap.${H} Vector.${H} Utility.${H}  MakeSpace.${H}
-	${CC} ${CFLAGS} -c PolySurf.${C}
+Witness.o: Witness.${C} Witness.${H} Plane.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c Witness.${C}
 
-Face.o:  Face.${C} Face.${H} Color.${H} Pixmap.${H} Vector.${H} Utility.${H}
-	${CC} ${CFLAGS} -c Face.${C}
+Quaternion.o: Quaternion.${C} Quaternion.${H} Matrix.${H} Vector.${H} Utility.${H}
+	${CC} $(CFLAGS) -c Quaternion.${C}
 
-Line.o:  Line.${C} Line.${H} Vector.${H} Utility.${H} MakeSpace.${H}
-	${CC} ${CFLAGS} -c Line.${C}
+Matrix.o: Matrix.${C} Matrix.${H} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c Matrix.${C}
 
-Group.o:  Group.${C} Group.${H} MakeSpace.${H}
-	${CC} ${CFLAGS} -c Group.${C}
-
-Material.o:  Material.${C} Material.${H} Color.${H} Pixmap.${H} Vector.${H} Utility.${H}
-	${CC} ${CFLAGS} -c Material.${C}
-
-Pixmap.o:  Pixmap.${C} Pixmap.${H}
-	${CC} ${CFLAGS} -c Pixmap.${C}
-
-Color.o:  Color.${C} Color.${H}
-	${CC} ${CFLAGS} -c Color.${C}
-
-Quaternion.o: Quaternion.${C} Quaternion.${H} 
-	${CC} ${CFLAGS} -c Quaternion.${C}
-
-Matrix.o: Matrix.${C} Matrix.${H} Vector.${H} Utility.${H}
-	${CC} $(CFLAGS) -c Matrix.${C}
-
-Vector.o: Vector.${C} Vector.${H} Utility.${H}
-	${CC} $(CFLAGS) -c Vector.${C}
+Vector.o: Vector.${C} Vector.${H} Utility.${H} 
+	${CC} ${CFLAGS} -c Vector.${C}
 
 Utility.o: Utility.${C} Utility.${H}
-	${CC} $(CFLAGS) -c Utility.${C}
-
-MakeSpace.o:  MakeSpace.${C} MakeSpace.${H}
-	${CC} ${CFLAGS} -c MakeSpace.${C}
-
+	${CC} ${CFLAGS} -c Utility.${C}
 
 debug:
 	make 'DFLAGS = /usr/lib/debug/malloc.o'
 
 clean:
-	rm *.o *~ ${PROJECT}
+	rm core.*; rm *.o; rm *~; rm ${PROJECT}
