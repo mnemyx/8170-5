@@ -1,9 +1,8 @@
 #----------------------------------------------
-#  Makefile for CpSc8170 - Proj4: Butterfly Springy Mesh
+#  Makefile for CpSc8170 - Proj5: Ridig Body Simulation
 #----------------------------------------------
 #
 #  Gina Guerrero
-#  August 28, 2013
 #
 
 CC      = g++
@@ -20,9 +19,9 @@ else
   endif
 endif
 
-HFILES 	= File.${H} OBJFile.${H} MTLFile.${H} ImageFile.${H} PolySurf.${H} Face.${H} Line.${H} Group.${H} Material.${H} Color.${H} Pixmap.${H} MakeSpace.${H} Matrix.${H} Vector.${H} Utility.${H} gauss.${H} Strut.${H} Hinge.${H} State.${H}
-OFILES 	= File.o OBJFile.o MTLFile.o ImageFile.o PolySurf.o Face.o Line.o Group.o Material.o Pixmap.o Color.o Matrix.o Vector.o Utility.o gauss.o Strut.o Hinge.o State.o
-PROJECT = particles
+HFILES 	= File.${H} OBJFile.${H} MTLFile.${H} ImageFile.${H} PolySurf.${H} Face.${H} Line.${H} Group.${H} Material.${H} Color.${H} Pixmap.${H} MakeSpace.${H} Quaternion.${H} Matrix.${H} Vector.${H} Utility.${H} gauss.${H} Strut.${H} Hinge.${H} State.${H}
+OFILES 	= File.o OBJFile.o MTLFile.o ImageFile.o PolySurf.o Face.o Line.o Group.o Material.o Pixmap.o Color.o Quaternion.o Matrix.o Vector.o Utility.o gauss.o Strut.o Hinge.o State.o
+PROJECT = rb
 
 ${PROJECT}:	${PROJECT}.o $(OFILES)
 	${CC} $(LFLAGS) -o ${PROJECT} ${PROJECT}.o $(OFILES) $(LDFLAGS)
@@ -74,6 +73,9 @@ Pixmap.o:  Pixmap.${C} Pixmap.${H}
 
 Color.o:  Color.${C} Color.${H}
 	${CC} ${CFLAGS} -c Color.${C}
+
+Quaternion.o: Quaternion.${C} Quaternion.${H} 
+	${CC} ${CFLAGS} -c Quaternion.${C}
 
 Matrix.o: Matrix.${C} Matrix.${H} Vector.${H} Utility.${H}
 	${CC} $(CFLAGS) -c Matrix.${C}
