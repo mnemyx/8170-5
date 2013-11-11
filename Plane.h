@@ -13,23 +13,23 @@ enum {BELOW, ON, ABOVE};
 const double EPS = 0.001;
 
 struct Plane{
-  Vector2d p;
-  Vector2d n;
-  
+  Vector3d p;
+  Vector3d n;
+
   Plane();
-  Plane(const Vector2d &point, const Vector2d &normal);
-  
-  void set(const Vector2d &point, const Vector2d &normal);
-  
-  double distance(const Vector2d &x) const;
-  
-  int region(const Vector2d &x, double offset = 0) const;
-  
+  Plane(const Vector3d &point, const Vector3d &normal);
+
+  void set(const Vector3d &point, const Vector3d &normal);
+
+  double distance(const Vector3d &x) const;
+
+  int region(const Vector3d &x, double offset = 0) const;
+
   void print();
   void draw(double length = 0.0);
-  
-  void drawnormal(Vector2d p, Vector2d n);
-  void drawplane(Vector2d p, Vector2d n, double length);
+
+  void drawnormal(Vector3d p, Vector3d n);
+  void drawplane(Vector3d p, Vector3d n, double length);
 };
 
 #endif // _PLANE_H_
