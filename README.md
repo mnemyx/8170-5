@@ -5,7 +5,7 @@ PROJECT
 
 	CpSc8170 - Fall 2013
 
-	Project #4 - Springy Meshes (Butterfly Wings Simulation)
+	Project #5 - Rigid Body Simulation
 
 	C++/OpenGL/ImageMagick
 
@@ -14,19 +14,11 @@ PROJECT
 DESCRIPTION
 ==================================================================
 
-	Springy Meshes - Butterfly Wings Simulation
+	Rigid Body Simulation
 
-	Gauss/Matrix/Vector/Utility by Dr. House
-	Model Class modified to create an isosphere & plane
+	Gauss/Matrix/Vector/Utility/Quaternion by Dr. House
 
-	Color/Face/File/Group/ImageFile/Line/MakeSpace/Material
-	MTLFile/OBJFile/Pixmap/PolySurf by Dr. House
-	These were re-used from CpSc 405 - Spring 2011's Hwk #6
-
-	OBJ/MTL files generated in Maya
-
-	Usage: particles [param_filename] [obj_file.obj]
-	ex,    particles p_c testcloth.obj
+	Usage: rb param
 
 KEY COMMANDS
 ==================================================================
@@ -53,6 +45,7 @@ FILES
 	State.cpp, State.h
 	Strut.cpp, Strut.h
 	Hinge.cpp, Hinge.h
+	RigidB.cpp, RidigB.h
 
 
 MISC FILES
@@ -60,22 +53,12 @@ MISC FILES
 	README.md
 	Makefile
 	MakeSpace.h
-	Color.cpp, Color.h
-	Face.cpp, Face.h
-	File.cpp, File.h
-	Group.cpp, Group.h
-	ImageFile.cpp, ImageFile.h
-	Line.cpp, Line.h
-	Material.cpp, Material.h
-	MTLFile.cpp, MTLFile.h
-	OBJFile.cpp, OBJFile.h
-	Pixmap.cpp, Pixmap.h
-	PolySurf.cpp, PolySurf.h
+	Quaternion.cpp, Quaternion.h
 	Matrix.cpp, Matrix.h
 	Utility.cpp, Utility.h
 	Vector.cpp, Vector.h
 	gauss.cpp, gauss.h
-	p
+	param
 
 
 SAMPLE OUTPUT FILES
@@ -85,4 +68,4 @@ SAMPLE OUTPUT FILES
 
 TOTAL FILE COUNT
 ==================================================================
-	~42
+	??
