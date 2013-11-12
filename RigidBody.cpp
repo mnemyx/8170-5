@@ -28,77 +28,77 @@ void a_ainv(double a, double &A, double &Ainv){
   else{
     A = a;
     Ainv = 1.0 / a;
-  }  
+  }
 }
 
 //
 // Constructor for rigid body
 //
-RigidBody::RigidBody(double m, double moi, int type, double d1, double d2){
-  Vector2d zero;
-  
+RigidBody::RigidBody(double m, double moi, int type, double d1, double d2, double d3){
+  Vector3d zero;
+
   rbi = 0;      // this rigid body's index is currently not set
-  
+
   geom = NULL;
-  setParams(m, moi, type, d1, d2);
-  
-  zero.set(0, 0);
+  setParams(m, moi, type, d1, d2, d3);
+
+  zero.set(0, 0, 0);
   setICs(zero, 0, zero, 0);
 }
 
 //
 // Destructor for rigid body
 //
-RigidBody::~RigidBody(){  
+RigidBody::~RigidBody(){
   // don't decrement class count of rigid bodies or array indices will be botched
   delete geom;
 }
 
-void RigidBody::setParams(double m, double moi, int type, double d1, double d2){
+void RigidBody::setParams(double m, double moi, int type, double d1, double d2, double d3){
   delete geom;
-  geom = new Geometry(type, d1, d2);
-  
+  geom = new Geometry(type, d1, d2, d3);
+
   a_ainv(m, M, Minv);
   a_ainv(moi, I, Iinv);
 }
 
-void RigidBody::setICs(Vector2d x0, double angle,
-		       Vector2d v0, double omega0){
+void RigidBody::setICs(Vector3d x0, double angle,
+		       Vector3d v0, double omega0, Quaternion quat){
   X = x0;
   Theta = angle;
   P = M * v0;
   L = I * omega0;
-  
+  Q = quat;
+
   ComputeAuxiliaries();
 }
 
 void RigidBody::ComputeAuxiliaries(){
   v = Minv * P;
   omega = Iinv * L;
-  R[0][0] = cos(Theta); R[0][1] = -sin(Theta);
-  R[1][0] = sin(Theta); R[1][1] = cos(Theta);
-  
+  R = Q.rotation();
+
   geom->place_in_world(X, R);
 }
 
-Vector2d RigidBody::r(const Vector2d &p){
+Vector3d RigidBody::r(const Vector3d &p){
   return p - X;
 }
 
-Vector2d RigidBody::dpdt(const Vector2d &p){
-  return v + omega * ~r(p);
+Vector3d RigidBody::dpdt(const Vector3d &p){
+  return v + omega % r(p);
 }
 
-double RigidBody::invInertia(const Vector2d &r, const Vector2d &n){
-  return Minv + Iinv * n * ((~r * n) * ~r);
+double RigidBody::invInertia(const Vector3d &r, const Vector3d &n){
+  return Minv + Iinv * n * ((r % n) % r);
 }
 
-int RigidBody::checkWitnessPlane(const Plane &witnessplane) const{  
+int RigidBody::checkWitnessPlane(const Plane &witnessplane) const{
   bool done;
   bool haveon;
   int region;
-  Vector2d vtx;
-  
+  Vector3d vtx;
+
   if(geom->type == CIRCLE)
     return witnessplane.region(geom->center, geom->r);
   else{		    // PLANE or PRISM
@@ -116,12 +116,12 @@ int RigidBody::checkWitnessPlane(const Plane &witnessplane) const{
 }
 
 //
-// Check if a witness plane candidate points away from the 
+// Check if a witness plane candidate points away from the
 // object it is attached to. If not, it is not a witness.
 //
-int RigidBody::checkLocalWitnessPlaneValidity(const Plane &witnessplane) const{  
+int RigidBody::checkLocalWitnessPlaneValidity(const Plane &witnessplane) const{
   int region = witnessplane.region(geom->center);
-  
+
   if(region == ABOVE)
     return BELOW;
   else
@@ -134,14 +134,14 @@ int RigidBody::checkLocalWitnessPlaneValidity(const Plane &witnessplane) const{
 // ABOVE if it is valid but not a contact
 //
 Witness RigidBody::findWitness(RigidBody *rb, int swapping){
-  Vector2d n, p;
-  Vector2d vtx;
+  Vector3d n, p;
+  Vector3d vtx;
   Plane witnessplane;
   int idx;
   int region, localregion;
   Witness witness;
   bool done;
-  
+
   // in comments below, *this is object a, *rb is object b.
   // a plane BELOW is not a witness, a plane ABOVE or ON is a witness.
   // if the plane is ON then this is an actual contact, ABOVE implies separation
@@ -160,19 +160,19 @@ Witness RigidBody::findWitness(RigidBody *rb, int swapping){
 	  break;
 	case PLANE:
 	case RECT_PRISM:
-	  // a=Circle/b=Plane or b=Prism: First check each plane of b to see 
+	  // a=Circle/b=Plane or b=Prism: First check each plane of b to see
 	  // if it is a witness
-	  for(idx = 0, witnessplane = rb->geom->FirstPlane(done); !done; 
+	  for(idx = 0, witnessplane = rb->geom->FirstPlane(done); !done;
 	      idx++, witnessplane = rb->geom->NextPlane(done)){
 	    region = checkWitnessPlane(witnessplane);
 	    if(region != BELOW) break;
 	  }
-	  // if no plane of b is a witness, then check to see if any vertex 
-	  // of b can be used to construct a witness, with point on plane 
-	  // being the vertex, and normal to plane being vector from vertex 
+	  // if no plane of b is a witness, then check to see if any vertex
+	  // of b can be used to construct a witness, with point on plane
+	  // being the vertex, and normal to plane being vector from vertex
 	  // to center of a
 	  if(region == BELOW){
-	    for(vtx = rb->geom->FirstVertex(done); !done && region == BELOW; 
+	    for(vtx = rb->geom->FirstVertex(done); !done && region == BELOW;
 		idx++, vtx = rb->geom->NextVertex(done)){
 	      witnessplane.set(vtx, (geom->center - vtx).normalize());
 	      region = checkWitnessPlane(witnessplane);
@@ -187,22 +187,22 @@ Witness RigidBody::findWitness(RigidBody *rb, int swapping){
 	  break;
       }
       break;
-      
+
       // object a is a PLANE or a RECTANGULAR PRISM
     case PLANE:
     case RECT_PRISM:
       switch(rb->geom->type){
 	case CIRCLE:
-	  // a=Plane or a=Prism/b=Circle: flip a and b and solve this 
+	  // a=Plane or a=Prism/b=Circle: flip a and b and solve this
 	  // using using CIRCLE/PLANE code
 	  swapping = 1;
 	  witness = rb->findWitness(this, swapping);
 	  break;
 	case PLANE:
 	case RECT_PRISM:
-	  // a=Plane or a=Prism/b=Plane or b=Prism: First check each plane of b 
+	  // a=Plane or a=Prism/b=Plane or b=Prism: First check each plane of b
 	  // to see if it is a witness
-	  for(idx = 0, witnessplane = rb->geom->FirstPlane(done); !done; 
+	  for(idx = 0, witnessplane = rb->geom->FirstPlane(done); !done;
 	      idx++, witnessplane = rb->geom->NextPlane(done)){
 	    region = checkWitnessPlane(witnessplane);
 	    if(region != BELOW) break;
@@ -217,7 +217,7 @@ Witness RigidBody::findWitness(RigidBody *rb, int swapping){
 	  break;
       }
   }
-  
+
   return witness;
 }
 
@@ -229,8 +229,8 @@ void RigidBody::print(){
   cout << "RIGIDBODY #" << rbi << '\n';
   cout << "M " << M << ", Minv " << Minv << ", I " << I << ", Iinv " << Iinv << '\n';
   cout << "X "; X.print(); cout << ", Theta " << Theta << ", P "; P.print(); cout << ", L " << L << '\n';
-  cout << "v "; v.print(); cout << ", Omega " << omega << ", R:\n";
-  R.print();
+  cout << "v "; v.print(); cout << ", Omega " << omega << ", Q:\n";
+  Q.print();
   cout << endl;
   geom->print();
 }

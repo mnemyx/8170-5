@@ -47,7 +47,7 @@ public:
 
   /* Vector2d operator prototypes */
   friend Vector2d operator-(const Vector2d& v1); // unary negation of vector
-  friend Vector2d operator+(const Vector2d& v1, const Vector2d& v2);//addition 
+  friend Vector2d operator+(const Vector2d& v1, const Vector2d& v2);//addition
   friend Vector2d operator-(const Vector2d& v1, const Vector2d& v2);//subtract
   friend Vector2d operator*(const Vector2d& v, double s); // scalar mult
   friend Vector2d operator*(double s, const Vector2d& v);
@@ -84,13 +84,14 @@ public:
 
   /* Vector3d operator prototypes */
   friend Vector3d operator-(const Vector3d& v1);	// unary negation
-  Vector3d operator+(const Vector3d& v2) const; // vector addition 
+  Vector3d operator+(const Vector3d& v2) const; // vector addition
   friend Vector3d operator-(const Vector3d& v1, const Vector3d& v2); // subtract
   friend Vector3d operator*(const Vector3d& v, double s);      // multiply
   friend Vector3d operator*(double s, const Vector3d& v);
   friend double   operator*(const Vector3d& v1, const Vector3d& v2); // dot
   friend Vector3d operator^(const Vector3d& v1, const Vector3d& v2); // compt *
   friend Vector3d operator%(const Vector3d& v1, const Vector3d& v2); // cross
+  friend Vector3d operator~(const Vector3d& v1); // unary perpendicualar to vector
   friend Vector3d operator/(const Vector3d& v, double s); // division by scalar
   friend short    operator==(const Vector3d& one, const Vector3d& two); // equ
 };
@@ -104,7 +105,7 @@ public:
 
   double& operator[](int i);
   const double& operator[](int i) const;
-  
+
   operator Vector();
 
   void print() const;
@@ -120,7 +121,7 @@ public:
 
   /* Vector4d operator prototypes */
   friend Vector4d operator-(const Vector4d& v1);  // unary negation
-  Vector4d operator+(const Vector4d& v2) const; // vector addition 
+  Vector4d operator+(const Vector4d& v2) const; // vector addition
   friend Vector4d operator-(const Vector4d& v1, const Vector4d& v2); //subtract
   friend Vector4d operator*(const Vector4d& v, double s);	// multiply
   friend Vector4d operator*(double s, const Vector4d& v);
@@ -148,7 +149,7 @@ public:
   void setsize(int vN);
 
   double& operator[](int i);
-  const double& operator[](int i) const;  
+  const double& operator[](int i) const;
 
   operator Vector2d();
   operator Vector3d();
@@ -167,7 +168,7 @@ public:
   void set(const Vector &v);
   void set(double vx, double vy);
   void set(double vx, double vy, double vz);
-  void set(double vx, double vy, double vz, double vw);  
+  void set(double vx, double vy, double vz, double vw);
 
   /* Vector operator prototypes */
   const Vector& operator=(const Vector& v2);		// assignment
@@ -177,7 +178,7 @@ public:
   friend Vector operator*(const Vector& v, double s);       // scalar multiply
   friend Vector operator*(double s, const Vector& v);
   friend Vector operator^(const Vector& v1, const Vector& v2); // component *
-  friend double operator*(const Vector& v1, const Vector& v2); // dot product 
+  friend double operator*(const Vector& v1, const Vector& v2); // dot product
   friend Vector operator%(const Vector& v1, const Vector& v2); // cross product
   friend Vector operator/(const Vector& v, double s);	  // division by scalar
   friend short  operator==(const Vector& one, const Vector& two); // equality

@@ -11,64 +11,66 @@
 #include "Geometry.h"
 #include "Plane.h"
 #include "Witness.h"
+#include "Quaternion.h"
 
 class RigidBody{
 public:
   int rbi;		// rigid body index of this rigid body
-  
+
   // parameters
   double M, Minv;
   double I, Iinv;
-  
+
   // state
-  Vector2d X;
-  double Theta;
-  Vector2d P;
+  Vector3d X;
+  Vector3d P;
   double L;
-  
+  Quaternion Q;
+
   // auxiliaries
-  Vector2d v;
+  Vector3d v;
   double omega;
-  Matrix2x2 R;
-  
+  double Theta;
+  Matrix3x3 R;
+
   // computed
-  Vector2d F;
+  Vector3d F;
   double Tau;
-  
+
   // motor inputs, as function of t
-  Vector2d F_m;
-  double Tau_m;
+  Vector3d F_m;
+  double Tau_m; // torque
 
   // geometry description
   Geometry *geom;
-  
-  RigidBody(double m = 1, double moi = 1, int type = PLANE, 
-	    double d1 = 1.0, double d2 = 1.0);
+
+  RigidBody(double m = 1, double moi = 1, int type = PLANE,
+	    double d1 = 1.0, double d2 = 1.0, double d3 = 1.0);
   ~RigidBody();
-  
-  void setParams(double m = 1, double moi = 1, int type = PLANE, 
-		 double d1 = 1.0, double d2 = 1.0);
-  
-  void setICs(Vector2d x0, double angle,
-	      Vector2d v0, double omega0);
-  
+
+  void setParams(double m = 1, double moi = 1, int type = PLANE,
+		 double d1 = 1.0, double d2 = 1.0,  double d3 = 1.0);
+
+  void setICs(Vector3d x0, double angle,
+	      Vector3d v0, double omega0, Quaternion quat);
+
   void ComputeAuxiliaries();
-  
-  Vector2d r(const Vector2d &p);      // vector from COM to p
-  Vector2d dpdt(const Vector2d &p);   // velocity of point p
-  
+
+  Vector3d r(const Vector3d &p);      // vector from COM to p
+  Vector3d dpdt(const Vector3d &p);   // velocity of point p
+
   // inv-inertia term at COM + r in direction of n
-  double invInertia(const Vector2d &r, const Vector2d &n);
-  
+  double invInertia(const Vector3d &r, const Vector3d &n);
+
   int checkWitnessPlane(const Plane &witnessplane) const;
   int checkLocalWitnessPlaneValidity(const Plane &witnessplane) const;
-  
+
   Witness findWitness(RigidBody *rb, int swapping = 0);
   Plane getPlane(RigidBody *other, int which);
-  
+
   void print();
   void draw();
-  
+
   void putstates();
   void getstates();
 };
