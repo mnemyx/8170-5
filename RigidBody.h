@@ -12,6 +12,7 @@
 #include "Plane.h"
 #include "Witness.h"
 #include "Quaternion.h"
+#include "rkstuff.cpp"
 
 class RigidBody{
 public:
