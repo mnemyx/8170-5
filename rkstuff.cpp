@@ -24,10 +24,10 @@ void XToxv(Vector3d &x, Vector3d &p, Vector3d &l, Quaternion &q, const Vector &X
   l.x = X[6];
   l.y = X[7];
   l.z = X[8];
-  q.angle = X[9];
-  q.axis.x = X[10];
-  q.axis.y = X[11];
-  q.axis.z = X[12];
+  q.w = X[9];
+  q.x = X[10];
+  q.y = X[11];
+  q.z = X[12];
 }
 
 void xvToX(const Vector3d &x, const Vector3d &p, const Vector3d &l, const Quaternion &q, Vector &X){
@@ -40,10 +40,10 @@ void xvToX(const Vector3d &x, const Vector3d &p, const Vector3d &l, const Quater
   X[6] = l.x;
   X[7] = l.y;
   X[8] = l.z;
-  X[9] = q.angle;
-  X[10] = q.axis.x;
-  X[11] = q.axis.y;
-  X[12] = q.axis.z;
+  X[9] = q.w;
+  X[10] = q.x;
+  X[11] = q.y;
+  X[12] = q.z;
 }
 
 int isresting(const Vector3d &x, const Vector3d &v, const Plane &pl){
