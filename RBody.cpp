@@ -27,12 +27,6 @@ void a_ainv(double a, double &A, double &Ainv){
 }
 
 //
-// helper function for omega and omega star
-//
-Matrix3x3 w_star() {
-}
-
-//
 // Constructor for rigid body
 //
 RBody::RBody(double m, double width, double height, double depth, int type, double d1, double d2, double d3){
