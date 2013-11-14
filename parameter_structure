@@ -1,0 +1,21 @@
+rbodies     #ofRBody
+mass
+width       height      depth
+type [0 = cube | 1 = plane]
+d1          d2          d3              (center)
+x0.x        x0.y        x0.z
+q.w         q.x         q.y             q.z
+v0.x        v0.y        v0.z
+omega0.x    omega0.y    omega0.z
+color.r     color.g     color.b         color.a
+
+spring
+k d
+length0
+rigid body index
+vertex index from rigid body
+
+environment
+gravity.x gravity.y gravity.z
+wind.x wind.y wind.z
+viscosity

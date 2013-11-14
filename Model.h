@@ -25,6 +25,12 @@
 #define SIDES			1
 #define TOPBOTTOM		2
 
+#ifdef __APPLE__
+#  include <GLUT/glut.h>
+#else
+#  include <GL/glut.h>
+#endif
+
 class Model{
 protected:
   Vector3d vertices[MAXVERTICES];   // vertex coordinates
@@ -65,7 +71,7 @@ public:
 
   // draw the current model
   void Draw(int wireframe = 1);
-  void Draw(const float* color);
+  void Draw(Vector4d color);
   void Draw(const float* frontC, const float* backC);
 
   // get triangle @ index & vertex @ index

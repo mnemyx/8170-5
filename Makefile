@@ -3,17 +3,18 @@ C	= cpp
 H	= h
 
 CFLAGS = -g
+LFLAGS = -g 
 
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lm
 else
   ifeq ("$(shell uname)", "Linux")
-    LDFLAGS     = -lglut -lGL -lm -L/usr/local/lib -lGLU
+    LDFLAGS     = -lglut -lGL -lm -L /user/local/lib -lGLU
   endif
 endif
 
-HFILES = Quaternion.${H} RBody.${H} Model.${H} Matrix.${H} Vector.${H} Utility.${H}
-OFILES = Quaternion.o RBody.o Model.o Matrix.o Vector.o Utility.o
+HFILES = StateVector.${H} RBSystem.${H} Strut.${H} Quaternion.${H} RBody.${H} Model.${H} Matrix.${H} Vector.${H} Utility.${H}
+OFILES = StateVector.o RBSystem.o Strut.o Quaternion.o RBody.o Model.o Matrix.o Vector.o Utility.o
 PROJECT = rbody
 
 ${PROJECT}:	${PROJECT}.o ${OFILES}
@@ -21,6 +22,15 @@ ${PROJECT}:	${PROJECT}.o ${OFILES}
 
 ${PROJECT}.o: ${PROJECT}.${C} ${HFILES}
 	${CC} ${CFLAGS} -c ${PROJECT}.${C}
+
+StateVector.o: StateVector.${C} StateVector.${H}
+	${CC} ${CFLAGS} -c StateVector.${C}
+
+Strut.o: Strut.${C} Strut.${H}
+	${CC} ${CFLAGS} -c Strut.${C}
+
+RBSystem.o: RBSystem.${C} RBSystem.${H}
+	${CC} ${CFLAGS} -c RBSystem.${C}
 
 RBody.o: RBody.${C} RBody.${H}
 	${CC} ${CFLAGS} -c RBody.${C}

@@ -12,11 +12,13 @@
 struct StateVector{
   int N;
   Vector states;
-  
+
   StateVector(int numentries = 0);
   ~StateVector();
-  
+
   void setSize(int numentires);
+
+  void print();
 };
 
 #endif // _STATEVECTOR_

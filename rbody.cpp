@@ -13,8 +13,7 @@
 #  include <GL/glut.h>
 #endif
 
-#include "RBody.h"
-#include "Matrix.h"
+#include "RBSystem.h"
 
 using namespace std;
 
@@ -72,40 +71,87 @@ static bool Stopped;
 static bool Step;
 static bool Started;
 
+char *Filename = NULL;
+
 static RBody Cube;
+static RBSystem RBSys;
 
 /************************* END OF GLOBAL VARIABLES *******************************/
 
-void Initialize(){
-  double mass[] = {1.0, 1.0, 1.0};
-  double moi[] = {1.0, 1.0, 1.0};
-  //int type[] = {RECT_PRISM, RECT_PRISM, RECT_PRISM};
-  double dim1[] = {1.0, 2.0, 1.75};
-  double dim2[] = {0.2, 1.5, 1.0};
+//
+// Read in parameter files
+//
+void loadParams(char *file) {
+    ifstream indata;
+    string check;
+    int numof;
+    double vars[21];
 
-  //rbsystem.setParams(mass, moi, type, dim1, dim2);
+    indata.open(file);
+    if(!indata) {
+        cerr << "Could not open the parameter file." << endl;
+        exit(1);
+    }
 
-  //Vector2d x0[NUMBODIES], v0[NUMBODIES];
-  //double theta0[NUMBODIES], omega0[NUMBODIES];
-  /*
-  x0[0].set(-2, 2);
-  theta0[0] = DegToRad(15);
-  v0[0].set(2, -2);
-  omega0[0] = DegToRad(60);
+    Filename = file;
 
-  x0[1].set(1, -2);
-  theta0[1] = DegToRad(-15);
-  v0[1].set(-1, 1);
-  omega0[1] = DegToRad(-45);
+    while(indata >> check) {
+        if(!check.compare("environment")) {
+            for(int i=0; i<7; i++)
+                indata >> vars[i];
 
-  x0[2].set(1.5, 1.5);
-  theta0[2] = DegToRad(0);
-  v0[2].set(-1, -1);
-  omega0[2] = DegToRad(80);
-  */
+            RBSys.setEnv(Vector(vars[0], vars[1], vars[2]), Vector(vars[3], vars[4], vars[5]), vars[6]);
 
-  Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
-    Cube.print();
+        } else if (!check.compare("spring")) {
+            for(int i = 0; i < 8; i++)
+                indata >> vars[i];
+
+            RBSys.setSpring(vars[0], vars[1], Vector(vars[2], vars[3], vars[4]), vars[5], vars[6], vars[7]);
+
+        } else if (!check.compare("rbodies")) {
+            indata >> numof;
+            double m[numof], w[numof], h[numof], d[numof], d1[numof], d2[numof], d3[numof];
+            int type[numof];
+            Quaternion q[numof];
+            Vector3d x0[numof], v0[numof], o0[numof];
+            Vector4d c[numof];
+
+            for(int k = 0; k < numof; k++) {
+                for(int i = 0; i < 25; i++)
+                    indata >> vars[i];
+
+                m[k] = vars[0];
+                w[k] = vars[1];
+                h[k] = vars[2];
+                d[k] = vars[3];
+                type[k] = vars[4];
+                d1[k] = vars[5];
+                d2[k] = vars[6];
+                d3[k] = vars[7];
+                x0[k].set(vars[8], vars[9], vars[10]);
+                q[k].set(vars[11], vars[12], vars[13], vars[14]);
+                v0[k].set(vars[15], vars[16], vars[17]);
+                o0[k].set(vars[18], vars[19], vars[20]);
+                c[k].set(vars[21], vars[22], vars[23], vars[24]);
+            }
+
+            RBSys.setSize(numof);
+            RBSys.setParams(m, w, h, d, type, d1, d2, d3, c);
+            RBSys.initializeState(x0, q, v0, o0);
+        }
+
+        indata.close();
+    }
+
+    RBSys.printsys();
+}
+
+void Initialize(char *file){
+
+  loadParams(file);
+
+  //Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
+    //Cube.print();
   t = 0;
   //rbsystem.initializeState(x0, theta0, v0, omega0);
 
@@ -153,7 +199,7 @@ void drawScreen(){
   glRotatef(ThetaX, 1, 0, 0);       // rotate model about y axis
 
   // draw the rigid bodies
-  Cube.drawbody();
+  RBSys.drawSys();
 
   glutSwapBuffers();
 }
@@ -223,7 +269,7 @@ void InitCamera() {
 //
 void RestartSim(){
 
-  Initialize(); // reload parameters in case changed
+  Initialize(Filename); // reload parameters in case changed
 
   glutIdleFunc(NULL);
   t = 0;
@@ -352,7 +398,12 @@ void handleMotion(int x, int y){
 //
 int main(int argc, char* argv[]){
 
-  Initialize();
+  if(argc != 2){
+    cerr << "usage: rbody paramfile\n";
+    exit(1);
+  }
+
+  Initialize(argv[1]);
 
   // start up the glut utilities
   glutInit(&argc, argv);

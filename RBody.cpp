@@ -1,4 +1,5 @@
 /*
+ *
  *  RBody.cpp
  *  GBG - Proj #5 - Rigid Bodies
  *
@@ -51,7 +52,6 @@ void RBody::setParams(double m, double width, double height, double depth, int t
 
     c.set(d1, d2, d3);
 
-    c.set(d1, d2, d3);
     p0.set(-width/2, height/2, -depth/2);
     p0 = p0 + c;
 
@@ -108,17 +108,16 @@ RBody::~RBody(){
 
 
 void RBody::drawbody() {
-    shape->Draw(0);
+    shape->Draw(color);
 }
 
 void RBody::print() {
   cout << "RIGIDBODY #" << rbi << '\n';
   cout << "M: " << M << ", Minv " << Minv << '\n';
-  //cout << "I: " << I.print(); cout << '\n';
-  //cout << "I: " << I.print(); cout << '\n';
-  //cout << "Iinv: " << Iinv.print(); cout << '\n';
-  //cout << "Ibody: " << Ibody.print(); cout << '\n';
-  //cout << "Ibodyinv: " << Ibodyinv.print(); cout << '\n';
+  cout << "I: "; I.print(); cout << '\n';
+  cout << "Iinv: "; Iinv.print(); cout << '\n';
+  cout << "Ibody: ";Ibody.print(); cout << '\n';
+  cout << "Ibodyinv: "; Ibodyinv.print(); cout << '\n';
   cout << "X: "; X.print();
   cout << endl << "Q: "; Q.print();
   cout << endl << "P: "; P.print();
@@ -126,5 +125,6 @@ void RBody::print() {
   cout << "v "; v.print(); cout << "\nOmega " << omega << "\nR:\n"; //R.print(); cout << endl;
   cout << "Force: " << force << endl;
   cout << "Torque: " << torque << endl;
+  cout << "Color: " << color << endl;
   shape->print();
 }

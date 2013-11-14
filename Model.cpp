@@ -410,7 +410,7 @@ void Model::Draw(int wireframe){
 //
 // Draw the current model with the assigned color
 //
-void Model::Draw(const float* color){
+void Model::Draw(Vector4d color){
   int itri, ivertex;
 
   glColor4f(color[0], color[1], color[2], color[3]);

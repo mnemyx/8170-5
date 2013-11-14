@@ -19,3 +19,10 @@ void StateVector::setSize(int nentries){
   N = nentries;
   states.setsize(N);
 }
+
+void StateVector::print() {
+    cout << "StateVector Size: " << N << endl;
+    for (int i = 0; i < N; i++)
+        cout << "     StateVector[" << i << "]: " << states[i] << endl;
+}
+
