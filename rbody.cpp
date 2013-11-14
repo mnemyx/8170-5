@@ -13,11 +13,8 @@
 #  include <GL/glut.h>
 #endif
 
-#include "RBSystem.h"
+#include "RBody.h"
 #include "Matrix.h"
-#include "Geometry.h"
-#include "Plane.h"
-#include "Witness.h"
 
 using namespace std;
 
@@ -26,7 +23,7 @@ const int HEIGHT = 600;
 
 const int NEAR = 10;
 const int FAR = 1000;
-const int DEPTH = -1000;
+const int DEPTH = -500;
 
 const int NONE = -1;
 
@@ -60,6 +57,7 @@ static int MiddleButton = false;
 /// variables above are for camera position and shading ///
 
 const float WHITE[] = {1, 1, 1, 1};
+const float BRIGHT_PALEBLUE[] = {0.5, 0.5, 1, 1};
 
 /// above are colors ///
 
@@ -74,20 +72,22 @@ static bool Stopped;
 static bool Step;
 static bool Started;
 
-RBSystem rbsystem(NUMBODIES);
+static RBody Cube;
+
+/************************* END OF GLOBAL VARIABLES *******************************/
 
 void Initialize(){
   double mass[] = {1.0, 1.0, 1.0};
   double moi[] = {1.0, 1.0, 1.0};
-  int type[] = {RECT_PRISM, RECT_PRISM, RECT_PRISM};
+  //int type[] = {RECT_PRISM, RECT_PRISM, RECT_PRISM};
   double dim1[] = {1.0, 2.0, 1.75};
   double dim2[] = {0.2, 1.5, 1.0};
 
-  rbsystem.setParams(mass, moi, type, dim1, dim2);
+  //rbsystem.setParams(mass, moi, type, dim1, dim2);
 
-  Vector2d x0[NUMBODIES], v0[NUMBODIES];
-  double theta0[NUMBODIES], omega0[NUMBODIES];
-
+  //Vector2d x0[NUMBODIES], v0[NUMBODIES];
+  //double theta0[NUMBODIES], omega0[NUMBODIES];
+  /*
   x0[0].set(-2, 2);
   theta0[0] = DegToRad(15);
   v0[0].set(2, -2);
@@ -102,9 +102,12 @@ void Initialize(){
   theta0[2] = DegToRad(0);
   v0[2].set(-1, -1);
   omega0[2] = DegToRad(80);
+  */
 
+  Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
+    Cube.print();
   t = 0;
-  rbsystem.initializeState(x0, theta0, v0, omega0);
+  //rbsystem.initializeState(x0, theta0, v0, omega0);
 
   Stopped = true;
   Started = true;
@@ -115,7 +118,7 @@ void Initialize(){
 // Display Callback Routine: clear the screen and draw the cat
 //
 void drawScreen(){
-  const float light_position1[] = {-1, 1, -1, 1};
+  const float light_position1[] = {1, 1, 1, 1};
   const float light_position2[] = {1, 1, 1, 1};
 
   // clear the window to the background color
@@ -138,7 +141,7 @@ void drawScreen(){
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHT1);
+  //glEnable(GL_LIGHT1);
 
   // establish camera coordinates
   glRotatef(Tilt, 1, 0, 0);	    // tilt - rotate camera about x axis
@@ -150,9 +153,36 @@ void drawScreen(){
   glRotatef(ThetaX, 1, 0, 0);       // rotate model about y axis
 
   // draw the rigid bodies
-  rbsystem.Draw();
+  Cube.drawbody();
 
   glutSwapBuffers();
+}
+
+void getShading() {
+    float ambient_color[4];
+    float diffuse_color[4];
+    float specular_color[4];
+    int shininess;
+
+
+    // set up material colors to current hue.
+    for(int i = 0; i < 3; i++)
+      ambient_color[i] = diffuse_color[i] = specular_color[i] = 0;
+    ambient_color[3] = diffuse_color[3] = specular_color[3] = 1;
+    shininess = 1;
+
+
+    for(int i = 0; i < 3; i++){
+      ambient_color[i] = AMBIENT_FRACTION * BRIGHT_PALEBLUE[i];
+      diffuse_color[i] = DIFFUSE_FRACTION * BRIGHT_PALEBLUE[i];
+      specular_color[i] = SPECULAR_FRACTION * WHITE[i];
+      shininess = 60;
+    }
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_color);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_color);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_color);
+    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
 //
@@ -162,7 +192,7 @@ void handleTimeStep(int n){
   if(Stopped)		// freeze if stopped
     return;
 
-  rbsystem.TakeTimestep(t, dt);
+  //rbsystem.TakeTimestep(t, dt);
 
   glutPostRedisplay();		// make sure it gets displayed
 
@@ -196,7 +226,7 @@ void RestartSim(){
   Initialize(); // reload parameters in case changed
 
   glutIdleFunc(NULL);
-
+  t = 0;
   drawScreen();
 }
 

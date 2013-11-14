@@ -204,7 +204,7 @@ const double& Vector::operator[](int i) const
 void Vector::setsize(int vN){
   if(vN < 0){
     cerr << "vector dimension of " << vN << " invalid" << endl;
-    exit(1);    
+    exit(1);
   }
 
   N = vN;
@@ -214,7 +214,7 @@ void Vector::setsize(int vN){
     v = new double[N];
     if(!v){
       cerr << "not enough memory to allocate vector of size " << N << endl;
-      exit(1);    
+      exit(1);
     }
   }
 
@@ -258,7 +258,7 @@ Vector4d::operator Vector(){
 Vector::operator Vector2d(){
   if(N > 2){
     cerr << "cannot convert " << N << " Vector to Vector2d" << endl;
-    exit(1);    
+    exit(1);
   }
 
   Vector2d rv;
@@ -273,7 +273,7 @@ Vector::operator Vector2d(){
 Vector::operator Vector3d(){
   if(N > 3){
     cerr << "cannot convert " << N << " Vector to Vector3d" << endl;
-    exit(1);    
+    exit(1);
   }
 
   Vector3d rv;
@@ -288,7 +288,7 @@ Vector::operator Vector3d(){
 Vector::operator Vector4d(){
   if(N > 4){
     cerr << "cannot convert " << N << " Vector to Vector4d" << endl;
-    exit(1);    
+    exit(1);
   }
 
   Vector4d rv;
@@ -474,7 +474,7 @@ void Vector::set(double vx, double vy, double vz, double vw){
   int i;
   for(i = 4; i < N; i++)
     v[i] = 0;
-} 
+}
 
 // Print a Vector to the standard output device.
 void Vector2d::print() const
@@ -626,7 +626,7 @@ Vector4d Vector4d::operator+(const Vector4d& v2) const
 Vector operator+(const Vector& v1, const Vector& v2)
 {
   if(v1.N != v2.N){
-    cerr << "cannot add " << v1.N << " Vector to " << v2.N << " Vector" << 
+    cerr << "cannot add " << v1.N << " Vector to " << v2.N << " Vector" <<
       endl;
     exit(1);
   }
@@ -775,7 +775,7 @@ double operator*(const Vector4d& v1, const Vector4d& v2)
 double operator*(const Vector& v1, const Vector& v2)
 {
   if(v1.N != v2.N){
-    cerr << "cannot take dot product of " << v1.N << " Vector with " << 
+    cerr << "cannot take dot product of " << v1.N << " Vector with " <<
       v2.N << " Vector" << endl;
     exit(1);
   }
@@ -939,7 +939,7 @@ short operator==(const Vector& one, const Vector& two)
   for(;i < N; i++)
     if(V[i] != 0)
       return 0;
-    
+
   return 1;
 }
 
@@ -955,4 +955,33 @@ const Vector& Vector::operator=(const Vector& v2){
     v[i] = v2.v[i];
 
   return *this;
+}
+
+
+ostream& operator<< (ostream& os, const Vector2d& v){
+  os << "[" << v.x << " " << v.y << "]";
+  return os;
+}
+
+ostream& operator<< (ostream& os, const Vector3d& v){
+  os << "[" << v.x << " " << v.y << " " << v.z << "]";
+  return os;
+}
+
+ostream& operator<< (ostream& os, const Vector4d& v){
+  os << "[" << v.x << " " << v.y << " " << v.z << " " << v.w << "]";
+  return os;
+}
+
+ostream& operator<< (ostream& os, const Vector& v){
+  if(v.N == 0)
+    os << "[]";
+  else{
+    int i;
+    os << "[" << v[0];
+    for(i = 1; i < v.N; i++)
+      os << " " << v[i];
+    os << "]";
+  }
+  return os;
 }
