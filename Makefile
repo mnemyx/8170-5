@@ -15,13 +15,13 @@ endif
 
 HFILES = StateVector.${H} RBSystem.${H} Strut.${H} Quaternion.${H} RBody.${H} Model.${H} Matrix.${H} Vector.${H} Utility.${H}
 OFILES = StateVector.o RBSystem.o Strut.o Quaternion.o RBody.o Model.o Matrix.o Vector.o Utility.o
-PROJECT = rbody
+PROJECT = rb
 
 ${PROJECT}:	${PROJECT}.o ${OFILES}
 	${CC} ${CFLAGS} -o ${PROJECT} ${PROJECT}.o ${OFILES} ${LDFLAGS}
 
 ${PROJECT}.o: ${PROJECT}.${C} ${HFILES}
-	${CC} ${CFLAGS} -c ${PROJECT}.${C}
+	${CC} ${CFLAGS} -c -Wall ${PROJECT}.${C}
 
 StateVector.o: StateVector.${C} StateVector.${H}
 	${CC} ${CFLAGS} -c StateVector.${C}
@@ -29,7 +29,7 @@ StateVector.o: StateVector.${C} StateVector.${H}
 Strut.o: Strut.${C} Strut.${H}
 	${CC} ${CFLAGS} -c Strut.${C}
 
-RBSystem.o: RBSystem.${C} RBSystem.${H}
+RBSystem.o: RBSystem.${C} RBSystem.${H} RBody.${H}
 	${CC} ${CFLAGS} -c RBSystem.${C}
 
 RBody.o: RBody.${C} RBody.${H}

@@ -4,8 +4,9 @@
 // NSF CCLI Project    Donald H. House         6/20/08
 //
 
-#include <iostream>       // definitions for C++ input/output
-#include <cstdlib>
+#include <fstream>
+#include <cstring>
+#include <cstdio>
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -14,6 +15,7 @@
 #endif
 
 #include "RBSystem.h"
+#include "RBody.h"
 
 using namespace std;
 
@@ -51,8 +53,6 @@ static int Button = NONE;
 
 static double WinWidth = WIDTH;
 static double WinHeight = HEIGHT;
-static int MiddleButton = false;
-
 /// variables above are for camera position and shading ///
 
 const float WHITE[] = {1, 1, 1, 1};
@@ -146,14 +146,13 @@ void loadParams(char *file) {
     RBSys.printsys();
 }
 
-void Initialize(char *file){
+void Initialize(){
 
-  loadParams(file);
+  //loadParams(file);
 
-  //Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
-    //Cube.print();
+  Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
+    Cube.print();
   t = 0;
-  //rbsystem.initializeState(x0, theta0, v0, omega0);
 
   Stopped = true;
   Started = true;
@@ -199,8 +198,8 @@ void drawScreen(){
   glRotatef(ThetaX, 1, 0, 0);       // rotate model about y axis
 
   // draw the rigid bodies
-  RBSys.drawSys();
-
+  //RBSys.drawSys();
+  Cube.drawbody();
   glutSwapBuffers();
 }
 
@@ -269,7 +268,7 @@ void InitCamera() {
 //
 void RestartSim(){
 
-  Initialize(Filename); // reload parameters in case changed
+  Initialize(); // reload parameters in case changed
 
   glutIdleFunc(NULL);
   t = 0;
@@ -398,12 +397,9 @@ void handleMotion(int x, int y){
 //
 int main(int argc, char* argv[]){
 
-  if(argc != 2){
-    cerr << "usage: rbody paramfile\n";
-    exit(1);
-  }
 
-  Initialize(argv[1]);
+
+  Initialize();
 
   // start up the glut utilities
   glutInit(&argc, argv);

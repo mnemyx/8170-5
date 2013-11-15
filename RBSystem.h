@@ -11,11 +11,6 @@
 #include "RBody.h"
 #include "StateVector.h"
 #include "Strut.h"
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>

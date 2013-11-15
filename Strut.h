@@ -7,8 +7,6 @@
 #ifndef _STRUT_H_
 #define _STRUT_H_
 
-#include <iostream>
-#include <cstdlib>
 #include "Vector.h"
 
 #ifdef __APPLE__

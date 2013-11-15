@@ -8,9 +8,6 @@
 #ifndef _RBODY_H_
 #define _RBODY_H_
 
-#include <iostream>
-#include <cstdlib>
-
 #include "Quaternion.h"
 #include "Vector.h"
 #include "Matrix.h"
