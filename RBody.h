@@ -53,11 +53,39 @@ class RBody {
         void setRBI(int indx) { rbi = indx; }
         void setParams(double m = 1, double width = 10.0, double height = 10.0, double depth = 10.0, int type = CUBE, double d1 = 1.0, double d2 = 1.0, double d3 = 1.0);
         void setColor(Vector4d c) {color = c;}
-        void setICs(Vector3d x0, Quaternion q, Vector3d v0, Vector3d omega0);
+        void initICs(Vector3d x0, Quaternion q, Vector3d v0, Vector3d omega0);
+        void setICs(Vector3d x, Quaternion q, Vector3d p, Vector3d l);
         void ComputeAuxiliaries();
 
 		void print();     // debugging
 		void drawbody();
+
+		Vector3d getX() { return X; }
+		Quaternion getQ() { return Q; }
+		Vector3d getL() { return L; }
+		Vector3d getP() { return P; }
+		double getM() { return M; }
+		const double getM() const { return M; }
+		const Vector3d getP() const { return P; }
+		const Vector3d getL() const { return L; }
+		const Quaternion getQ() const { return Q; }
+		const Vector3d getX() const { return X; }
+
+		Vector3d getv() { return v; }
+		Vector3d getw() { return omega; }
+		Vector3d getf() { return force; }
+		Vector3d gett() { return torque; }
+		Matrix3x3 getr() { return R; }
+		const Vector3d getv() const { return v; }
+		const Vector3d getw() const { return omega; }
+		const Vector3d getf() const { return force; }
+		const Vector3d gett() const { return torque; }
+		const Matrix3x3 getr() const { return R; }
+
+		Vector3d getvertex(int idx) { return shape->GetVertex(idx); }
+		const Vector3d getvertex(int indx) const { return shape->GetVertex(indx); }
+		Matrix3x3 getIbodyinv() { return Ibodyinv; }
+		const Matrix3x3 getIbodyinv() const { return Ibodyinv; }
 };
 
 #endif

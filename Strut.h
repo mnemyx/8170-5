@@ -25,6 +25,7 @@ class Strut {
 	public:
         Strut();
         Strut(double k, double d, float l0, Vector3d p0);
+        Strut(const Strut& o);
 
         void SetStrut(double k, double d, float l0, Vector3d p0);
 
@@ -37,6 +38,11 @@ class Strut {
         double GetD() { return D; }
         float GetL0() { return L0; }
         Vector3d GetP0() { return P0; }
+
+        const double GetK() const { return K; }
+        const double GetD() const { return D; }
+        const float GetL0() const { return L0; }
+        const Vector3d GetP0() const { return P0; }
 
 		void PrintStrut();          // debugging
 };

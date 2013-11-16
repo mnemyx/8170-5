@@ -78,17 +78,33 @@ void RBody::setParams(double m, double width, double height, double depth, int t
 
 }
 
-void RBody::setICs(Vector3d x0, Quaternion q, Vector3d v0, Vector3d omega0){
-  R = Q.rotation();
+void RBody::initICs(Vector3d x0, Quaternion q, Vector3d v0, Vector3d omega0){
+  Q = q;
+
+  R = Q.normalize().rotation();
   I = R * Ibody * R.transpose();
 
   X = x0;
-  Q = q;
   P = M * v0;
   L = I * omega0;
 
   ComputeAuxiliaries();
 }
+
+void RBody::setICs(Vector3d x, Quaternion q, Vector3d p, Vector3d l){
+  Q = q;
+
+  R = Q.normalize().rotation();
+  I = R * Ibody * R.transpose();
+
+  X = x;
+  P = p;
+  L = l;
+
+  ComputeAuxiliaries();
+}
+
+
 
 void RBody::ComputeAuxiliaries(){
   v = Minv * P;
@@ -114,10 +130,10 @@ void RBody::drawbody() {
 void RBody::print() {
   cout << "RIGIDBODY #" << rbi << '\n';
   cout << "M: " << M << ", Minv " << Minv << '\n';
-  cout << "I: "; I.print(); cout << '\n';
-  cout << "Iinv: "; Iinv.print(); cout << '\n';
-  cout << "Ibody: ";Ibody.print(); cout << '\n';
-  cout << "Ibodyinv: "; Ibodyinv.print(); cout << '\n';
+  cout << "I: \n"; I.print();
+  cout << "Iinv: \n"; Iinv.print();
+  cout << "Ibody: \n";Ibody.print();
+  cout << "Ibodyinv: \n"; Ibodyinv.print();
   cout << "X: "; X.print();
   cout << endl << "Q: "; Q.print();
   cout << endl << "P: "; P.print();
@@ -125,6 +141,6 @@ void RBody::print() {
   cout << "v "; v.print(); cout << "\nOmega " << omega << "\nR:\n"; //R.print(); cout << endl;
   cout << "Force: " << force << endl;
   cout << "Torque: " << torque << endl;
-  cout << "Color: " << color << endl;
+  cout << "Color: \n" << color << endl;
   shape->print();
 }

@@ -21,6 +21,13 @@ Strut::Strut(double k, double d, float l, Vector3d p0) {
     P0 = p0;
 }
 
+Strut::Strut(const Strut& o) {
+    K = o.GetK();
+    D = o.GetD();
+    L0 = o.GetL0();
+    P0 = o.GetP0();
+}
+
 
 void Strut::SetStrut(double k, double d, float l, Vector3d p0) {
     K = k;

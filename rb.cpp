@@ -4,9 +4,8 @@
 // NSF CCLI Project    Donald H. House         6/20/08
 //
 
+#include <iostream>
 #include <fstream>
-#include <cstring>
-#include <cstdio>
 
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
@@ -71,10 +70,10 @@ static bool Stopped;
 static bool Step;
 static bool Started;
 
-char *Filename = NULL;
+static char *Filename = NULL;
 
 static RBody Cube;
-static RBSystem RBSys;
+static RBSystem *RBSys = NULL;
 
 /************************* END OF GLOBAL VARIABLES *******************************/
 
@@ -83,7 +82,7 @@ static RBSystem RBSys;
 //
 void loadParams(char *file) {
     ifstream indata;
-    string check;
+    char check[100];
     int numof;
     double vars[21];
 
@@ -96,19 +95,19 @@ void loadParams(char *file) {
     Filename = file;
 
     while(indata >> check) {
-        if(!check.compare("environment")) {
+        if(strcmp(check, "environment") == 0) {
             for(int i=0; i<7; i++)
                 indata >> vars[i];
 
-            RBSys.setEnv(Vector(vars[0], vars[1], vars[2]), Vector(vars[3], vars[4], vars[5]), vars[6]);
+            RBSys->setEnv(Vector(vars[0], vars[1], vars[2]), Vector(vars[3], vars[4], vars[5]), vars[6]);
 
-        } else if (!check.compare("spring")) {
+        } else if (strcmp(check, "spring") == 0) {
             for(int i = 0; i < 8; i++)
                 indata >> vars[i];
 
-            RBSys.setSpring(vars[0], vars[1], Vector(vars[2], vars[3], vars[4]), vars[5], vars[6], vars[7]);
+            RBSys->setSpring(vars[0], vars[1], Vector(vars[2], vars[3], vars[4]), vars[5], vars[6], vars[7]);
 
-        } else if (!check.compare("rbodies")) {
+        } else if (strcmp(check, "rbodies") == 0) {
             indata >> numof;
             double m[numof], w[numof], h[numof], d[numof], d1[numof], d2[numof], d3[numof];
             int type[numof];
@@ -135,23 +134,23 @@ void loadParams(char *file) {
                 c[k].set(vars[21], vars[22], vars[23], vars[24]);
             }
 
-            RBSys.setSize(numof);
-            RBSys.setParams(m, w, h, d, type, d1, d2, d3, c);
-            RBSys.initializeState(x0, q, v0, o0);
+            RBSys = new RBSystem(numof);
+            RBSys->setParams(m, w, h, d, type, d1, d2, d3, c);
+            RBSys->initializeState(x0, q, v0, o0);
         }
 
         indata.close();
     }
 
-    RBSys.printsys();
+    RBSys->printsys();
 }
 
-void Initialize(){
+void Initialize(char *file){
 
-  //loadParams(file);
+  loadParams(file);
 
-  Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
-    Cube.print();
+  //Cube.setParams(1.0, 25.0, 25.0, 25.0, 0, 0.0, 0.0, 0.0);
+    //Cube.print();
   t = 0;
 
   Stopped = true;
@@ -198,8 +197,8 @@ void drawScreen(){
   glRotatef(ThetaX, 1, 0, 0);       // rotate model about y axis
 
   // draw the rigid bodies
-  //RBSys.drawSys();
-  Cube.drawbody();
+  RBSys->drawSys();
+  //Cube.drawbody();
   glutSwapBuffers();
 }
 
@@ -234,19 +233,22 @@ void getShading() {
 // Motion event handler, runs on a timer
 //
 void handleTimeStep(int n){
-  if(Stopped)		// freeze if stopped
-    return;
+    if(Stopped)		// freeze if stopped
+        return;
 
-  //rbsystem.TakeTimestep(t, dt);
+    RBSys->takeTimestep(t, dt);
 
-  glutPostRedisplay();		// make sure it gets displayed
+    t += dt;
 
-  if(Step){
-    Stopped = true;
-    Step = false;
-  }
-  else
-    glutTimerFunc(TimerDelay, handleTimeStep, 0); // and move again after another delay
+    glutPostRedisplay();		// make sure it gets displayed
+
+    if(Step){
+        Stopped = true;
+        Step = false;
+    } else {
+        Stopped = false;
+        glutTimerFunc(TimerDelay, handleTimeStep, 0); // and move again after another delay
+    }
 }
 
 // Init Camera
@@ -268,7 +270,7 @@ void InitCamera() {
 //
 void RestartSim(){
 
-  Initialize(); // reload parameters in case changed
+  Initialize(Filename); // reload parameters in case changed
 
   glutIdleFunc(NULL);
   t = 0;
@@ -397,9 +399,12 @@ void handleMotion(int x, int y){
 //
 int main(int argc, char* argv[]){
 
+  if(argc != 2){
+    cerr << "usage: rbody paramfile\n";
+    exit(1);
+  }
 
-
-  Initialize();
+  Initialize(argv[1]);
 
   // start up the glut utilities
   glutInit(&argc, argv);
