@@ -41,24 +41,24 @@ MOUSE COMMANDS
 
 FILES
 ==================================================================
-	particles.cpp (main program)
-	State.cpp, State.h
+	rb.cpp (main program)
+	StateVector.cpp, StateVector.h
+	RBody.cpp, RBody.h
+	RBSystem.cpp, RBSystem.h
+	Model.cpp, Model.h
 	Strut.cpp, Strut.h
-	Hinge.cpp, Hinge.h
-	RigidB.cpp, RidigB.h
+	
 
 
 MISC FILES
 ==================================================================
 	README.md
 	Makefile
-	MakeSpace.h
 	Quaternion.cpp, Quaternion.h
 	Matrix.cpp, Matrix.h
 	Utility.cpp, Utility.h
 	Vector.cpp, Vector.h
-	gauss.cpp, gauss.h
-	param
+	p, parameter_structure
 
 
 SAMPLE OUTPUT FILES
@@ -68,4 +68,4 @@ SAMPLE OUTPUT FILES
 
 TOTAL FILE COUNT
 ==================================================================
-	??
+	23
