@@ -25,6 +25,7 @@ void a_ainv(double a, double &A, double &Ainv){
     A = a;
     Ainv = 1.0 / a;
   }
+  //cout << "a: " << a << "; A: " << A << "; Ainv: " << Ainv << endl;
 }
 
 //
@@ -67,21 +68,33 @@ void RBody::setParams(double m, double width, double height, double depth, int t
     shape->BuildPlane(p0, p1, p2, p3, c);
   } else
     shape->BuildCuboid(width, height, depth, d1, d2, d3);
-
+//cout << "m: " << m << endl;
   a_ainv(m, M, Minv);
-
-  Ibody.set(1/12 * M * (height * height + depth * depth), 0, 0,
-            0, 1/12 * M * (width * width + depth * depth), 0,
-            0, 0, 1/12 * M * (width * width + height * height));
+  //cout << "M: " << M << "; Minv: " << Minv << endl;
+  //cout << "height: " << height << "; depth: " << depth << "; width: " << width << endl;
+  //cout << "(height * height + depth * depth): " << (height * height + depth * depth) * M * 1 / 12<< endl;
+//cout << "1/12 * M * (height * height + depth * depth): " << 1/12 * M  << endl;
+  Ibody.set((height * height + depth * depth) * M * 1 / 12, 0, 0,
+            0, (height * height + depth * depth) * M * 1 / 12, 0,
+            0, 0, (height * height + depth * depth) * M * 1 / 12);
+  //cout << "Ibody: " << endl;
+  //Ibody.print();
 
   Ibodyinv = Ibody.inv();
+  //cout << "Ibodyinv: " << endl;
+  //Ibodyinv.print();
 
 }
 
 void RBody::initICs(Vector3d x0, Quaternion q, Vector3d v0, Vector3d omega0){
   Q = q;
-
-  R = Q.normalize().rotation();
+  //cout << "Q: " << endl;
+  //Q.print();
+  //Q.normalize().print();
+  //Q.normalize().rotation().print();
+  //R = Q.normalize().rotation();
+  //cout << "R: " << endl;
+  //R.print();
   I = R * Ibody * R.transpose();
 
   X = x0;
@@ -138,9 +151,9 @@ void RBody::print() {
   cout << endl << "Q: "; Q.print();
   cout << endl << "P: "; P.print();
   cout << endl << "L: " << L << '\n';
-  cout << "v "; v.print(); cout << "\nOmega " << omega << "\nR:\n"; //R.print(); cout << endl;
+  cout << "v "; v.print(); cout << "\nOmega " << omega << "\nR:\n"; R.print(); cout << endl;
   cout << "Force: " << force << endl;
   cout << "Torque: " << torque << endl;
-  cout << "Color: \n" << color << endl;
+  cout << "Color: " << color << endl;
   shape->print();
 }

@@ -63,7 +63,7 @@ const int NUMBODIES = 3;
 
 const int TimerDelay = 100; // 1/10 second delay between time steps
 
-const double dt = 0.005;
+const double dt = .1;
 static double t;
 
 static bool Stopped;
@@ -96,18 +96,22 @@ void loadParams(char *file) {
 
     while(indata >> check) {
         if(strcmp(check, "environment") == 0) {
+        cout << " LOADING ENVIRONMENT DATA " << endl;
             for(int i=0; i<7; i++)
                 indata >> vars[i];
 
             RBSys->setEnv(Vector(vars[0], vars[1], vars[2]), Vector(vars[3], vars[4], vars[5]), vars[6]);
 
         } else if (strcmp(check, "spring") == 0) {
-            for(int i = 0; i < 8; i++)
+        cout << " LOADING SPRING DATA " << endl;
+            for(int i = 0; i < 8; i++){
                 indata >> vars[i];
-
+                cout << "vars[" << i << "]: " <<  vars[i] << endl;
+                }
             RBSys->setSpring(vars[0], vars[1], Vector(vars[2], vars[3], vars[4]), vars[5], vars[6], vars[7]);
 
         } else if (strcmp(check, "rbodies") == 0) {
+        cout << "LOADING RBODY DATA " << endl;
             indata >> numof;
             double m[numof], w[numof], h[numof], d[numof], d1[numof], d2[numof], d3[numof];
             int type[numof];
@@ -116,9 +120,11 @@ void loadParams(char *file) {
             Vector4d c[numof];
 
             for(int k = 0; k < numof; k++) {
-                for(int i = 0; i < 25; i++)
+                for(int i = 0; i < 25; i++) {
                     indata >> vars[i];
 
+                //cout << "vars[" << i << "]: " <<  vars[i] << endl;
+                }
                 m[k] = vars[0];
                 w[k] = vars[1];
                 h[k] = vars[2];
@@ -135,14 +141,16 @@ void loadParams(char *file) {
             }
 
             RBSys = new RBSystem(numof);
+            //cout << " HIHIHIHIH " << endl;
             RBSys->setParams(m, w, h, d, type, d1, d2, d3, c);
             RBSys->initializeState(x0, q, v0, o0);
-        }
 
-        indata.close();
+        }
     }
 
     RBSys->printsys();
+
+    indata.close();
 }
 
 void Initialize(char *file){
@@ -238,8 +246,12 @@ void handleTimeStep(int n){
 
     RBSys->takeTimestep(t, dt);
 
+    //cout << "taking time step" << endl;
+    //RBSys->printsys(); cout << endl;
+
     t += dt;
 
+    drawScreen();
     glutPostRedisplay();		// make sure it gets displayed
 
     if(Step){

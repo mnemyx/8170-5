@@ -32,7 +32,11 @@ RBSystem::~RBSystem() {
 }
 
 void RBSystem::setParams(double m[], double width[], double height[], double depth[], int type[], double d1[], double d2[], double d3[], Vector4d c[]) {
+    //cout << "nbodies -- setParams(): " << nbodies << endl;
     for(int i = 0; i < nbodies; i++) {
+        //cout << "width[" << i << "]: " << width[i] << endl;
+        //cout << "height[" << i << "]: " << height[i] << endl;
+        //cout << "depth[" << i << "]: " << depth[i] << endl;
         rblist[i].setParams(m[i], width[i], height[i], depth[i], type[i], d1[i], d2[i], d3[i]);
         rblist[i].setColor(c[i]);
     }
@@ -148,7 +152,7 @@ void XtoState(Vector3d &x, Quaternion &q, Vector3d &p, Vector3d &l, const StateV
     l.set(X[10],X[11], X[12]);
 }
 
-void StatetoX(const Vector3d &x, const Quaternion &q, const Vector3d &p, const Vector3d &l, StateVector X) {
+void StatetoX(const Vector3d x, const Quaternion q, const Vector3d p, const Vector3d l, StateVector &X) {
     X[0] = x.x;
     X[1] = x.y;
     X[2] = x.z;
@@ -169,38 +173,60 @@ StateVector dynamics(const StateVector &X, double t, double dt, int nbodies, con
     Quaternion q;
     StateVector newXdot(nbodies * STATE_SIZE);
     Vector3d F, T, V, Q;
-    Vector3d fg, fs;
-    Vector3d ts;
+    Vector3d fg, fs, fd;
+    Vector3d ts, tg, td;
     Vector3d w;
     Matrix3x3 r, iinv;
     Quaternion wq, qdot;
 
     XtoState(x, q, p, l, X);
 
+    //cout << "x: " << x << endl;
+    //cout << "q: " << q << endl;
+    //cout << "p: " << p << endl;
+    //cout << "l: " << l << endl;
+
     // calc velocity
     V = p / rb.getM();
-
+    //cout << "M: " << rb.getM() << endl;
+    //cout << "V: " << V << endl;
     // calc rate of change of q:
     r = q.normalize().rotation();
     iinv = r * rb.getIbodyinv() * r.transpose();
 
+    //cout << "iinv: \n";
+    //iinv.print();
+
     w = iinv * l;
-    wq.set(0, w);
+    wq.set(w);
+    //cout << endl << "w: " << w << endl;
+    //cout << endl << "wq: " << wq << endl;
 
     Q = 0.5 * wq * q;
-
+    //cout << "Q: " << Q << endl;
     // calc force
-    fg = rb.getM() * Env.G;
+    //fg = rb.getM() * Env.G;
+
+    if (Env.W.x == 0 && Env.W.y == 0 && Env.W.z == 0)
+        fg = (Env.G - Env.Vis * V ) * rb.getM();
+    else
+        fg = (Env.G + Env.Vis * (Env.W - V)) * rb.getM();
+
 
     Vector3d p1 = rb.getvertex(spi);
-    fs = - sp.GetK() * ((p1 - sp.GetP0()).norm() - sp.GetL0()) * (p1 - sp.GetP0()).normalize();
 
-    F = fg + fs;
+    fs = - (sp.GetK() / rb.getM()) * ((p1 - sp.GetP0()).norm() - sp.GetL0()) * (p1 - sp.GetP0()).normalize();
+
+    fd = - (sp.GetD() / rb.getM()) * ((V * (p1 - sp.GetP0()).normalize()) * (p1 - sp.GetP0()).normalize());
+    //cout << "fs: " << fs << endl;
+    F = fg + fs + fd;
 
     // calc torque
-    ts = (p1 - x) % fs;
+    ts = (p1 - x).norm() % (fs);
 
-    T = ts;
+    td = (p1 - x).norm() % (fd);
+
+    T = ts + td;
 
     StatetoX(V, Q, F, T, newXdot);
 
@@ -228,20 +254,37 @@ void RBSystem::takeTimestep(double t, double dt) {
     for(int i = 0; i < nbodies; i ++) {
         StatetoX(rblist[i].getX(), rblist[i].getQ(),
                  rblist[i].getP(), rblist[i].getL(), Y);
+        //cout << "Y: \n" << endl;
+        //Y.print();
         Ydot = dynamics(Y, t, dt, nbodies, rblist[i], Spring, springmeta[1], Env);
 
-        drawSys();
+        //cout << "Ydot: \n" << endl;
+        //Ydot.print();
 
         Xnew = RK4(Y, Ydot, t, dt, nbodies, rblist[i], Spring, springmeta[1], Env);
         XtoState(x, q, p, l, Xnew);
+
         rblist[i].setICs(x, q, p, l);
     }
+
+    printsys();
 }
 
 void RBSystem::drawSys(){
     // draw strut/spring
     for(int i = 0; i < nbodies; i++)
         rblist[i].drawbody();
+
+    cout << "Spring.GetP0(): " << Spring.GetP0() << endl;
+    cout << "rblist[springmeta[0]].getvertex(springmeta[1]): " << rblist[springmeta[0]].getvertex(springmeta[1]) << endl;
+    glEnable(GL_LINE_SMOOTH);
+    glBegin(GL_LINES);
+        glLineWidth(1);
+        glColor3f(1,1,1);
+        glVertex3f(Spring.GetP0().x, Spring.GetP0().y, Spring.GetP0().z);
+        glVertex3f(rblist[springmeta[0]].getvertex(springmeta[1]).x, rblist[springmeta[0]].getvertex(springmeta[1]).y, rblist[springmeta[0]].getvertex(springmeta[1]).z);
+    glEnd();
+    glDisable(GL_LINE_SMOOTH);
 }
 
 void RBSystem::printsys() {

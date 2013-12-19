@@ -22,8 +22,8 @@ DESCRIPTION
 
 KEY COMMANDS
 ==================================================================
-	d or D		start simulation
-	s or S		switches simulation from step to continous
+	d or D		start simulation/step simulation
+	s or S		switches simulation from step to continous (default: continuous)
 	w or W		switches simulation from wireframe to shaded
 	p or P		switches from ortho to perspective views (default: perspective)
 	r or R      	resets the simulation, so if you change parameters - this will re-read them
