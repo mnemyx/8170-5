@@ -52,6 +52,7 @@ static int Button = NONE;
 
 static double WinWidth = WIDTH;
 static double WinHeight = HEIGHT;
+
 /// variables above are for camera position and shading ///
 
 const float WHITE[] = {1, 1, 1, 1};
@@ -63,7 +64,7 @@ const int NUMBODIES = 3;
 
 const int TimerDelay = 100; // 1/10 second delay between time steps
 
-const double dt = .1;
+const double dt = .05;
 static double t;
 
 static bool Stopped;
