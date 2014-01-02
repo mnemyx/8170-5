@@ -264,10 +264,10 @@ void handleTimeStep(int n){
 }
 
 // Init Camera
-void InitCamera() {
+ void InitCamera() {
   glDisable(GL_LIGHTING);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  //glDisable(GL_BLEND);
 
   Pan = 0;
   Tilt = 0;
@@ -421,12 +421,12 @@ int main(int argc, char* argv[]){
   // start up the glut utilities
   glutInit(&argc, argv);
 
-  InitCamera();
-
   // create the graphics window, giving width, height, and title text
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(WIDTH, HEIGHT);
   glutCreateWindow("Rigid Body Simulation");
+
+  InitCamera();
 
   // drawing callback routine
   glutDisplayFunc(drawScreen);

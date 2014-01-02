@@ -215,16 +215,24 @@ StateVector dynamics(const StateVector &X, double t, double dt, int nbodies, con
 
     Vector3d p1 = rb.getvertex(spi);
 
-    fs = - (sp.GetK() / rb.getM()) * ((p1 - sp.GetP0()).norm() - sp.GetL0()) * (p1 - sp.GetP0()).normalize();
-
-    fd = - (sp.GetD() / rb.getM()) * ((V * (p1 - sp.GetP0()).normalize()) * (p1 - sp.GetP0()).normalize());
+    //fs = - (sp.GetK() / rb.getM()) * ((p1 - sp.GetP0()).norm() - sp.GetL0()) * (p1 - sp.GetP0()).normalize();
+    //fd = - (sp.GetD() / rb.getM()) * ((V * (p1 - sp.GetP0()).normalize()) * (p1 - sp.GetP0()).normalize());
     //cout << "fs: " << fs << endl;
+
+    fs = -sp.GetK() * ((p1 - sp.GetP0()).norm() - sp.GetL0()) * (p1 - sp.GetP0()).normalize();
+
+    fd = -sp.GetD() * ((V * (p1 - sp.GetP0()).normalize()) * (p1 - sp.GetP0()).normalize());
+
     F = fg + fs + fd;
 
-    // calc torque
-    ts = (p1 - x).norm() % (fs);
 
-    td = (p1 - x).norm() % (fd);
+    // calc torque
+    //    ts = (p1 - x).norm() % (fs);
+    //    td = (p1 - x).norm() % (fd);
+
+    ts = (p1 - x) % fs;
+
+    td = (p1 - x) % fd;
 
     T = ts + td;
 
